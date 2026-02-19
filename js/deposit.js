@@ -1,10 +1,17 @@
 $(document).ready(function() {
-  // Inicializar saldo
-  let saldo = localStorage.getItem("saldo") ? parseFloat(localStorage.getItem("saldo")) : 0;
+  // Obtener usuario actual
+  let usuario = localStorage.getItem("usuarioActual");
+
+  // Inicializar saldo del usuario
+  let saldo = localStorage.getItem(`saldo_${usuario}`) 
+    ? parseFloat(localStorage.getItem(`saldo_${usuario}`)) 
+    : 0;
   $("#saldo").text(`$${saldo}`);
 
-  // Inicializar contactos
-  let contactos = localStorage.getItem("contactos") ? JSON.parse(localStorage.getItem("contactos")) : ["Ana", "Pedro", "Luis"];
+  // Inicializar contactos del usuario
+  let contactos = localStorage.getItem(`contactos_${usuario}`) 
+    ? JSON.parse(localStorage.getItem(`contactos_${usuario}`)) 
+    : [];
 
   // Mostrar lista de contactos
   function mostrarContactos() {
@@ -25,7 +32,7 @@ $(document).ready(function() {
     let nuevo = prompt("Ingrese el nombre del nuevo contacto:");
     if (nuevo && !contactos.includes(nuevo)) {
       contactos.push(nuevo);
-      localStorage.setItem("contactos", JSON.stringify(contactos));
+      localStorage.setItem(`contactos_${usuario}`, JSON.stringify(contactos));
       mostrarContactos();
       alert(`Contacto ${nuevo} agregado exitosamente`);
     }
@@ -49,20 +56,22 @@ $(document).ready(function() {
     let saldoAntes = saldo;
     saldo += monto;
     let saldoDespues = saldo;
-    localStorage.setItem("saldo", saldo);
+    localStorage.setItem(`saldo_${usuario}`, saldo);
 
-    // Guardar transacción detallada
-    let transacciones = localStorage.getItem("transacciones") ? JSON.parse(localStorage.getItem("transacciones")) : [];
+    // Guardar transacción detallada del usuario
+    let transacciones = localStorage.getItem(`transacciones_${usuario}`) 
+      ? JSON.parse(localStorage.getItem(`transacciones_${usuario}`)) 
+      : [];
     transacciones.push({
       tipo: "Depósito",
-      origen: "Usuario",
+      origen: usuario,
       destinatario,
       monto,
       saldoAntes,
       saldoDespues,
       fecha: new Date().toLocaleString()
     });
-    localStorage.setItem("transacciones", JSON.stringify(transacciones));
+    localStorage.setItem(`transacciones_${usuario}`, JSON.stringify(transacciones));
 
     alert(`Depósito exitoso: $${monto} a ${destinatario}`);
     $("#saldo").text(`$${saldo}`);

@@ -1,11 +1,19 @@
 $(document).ready(function() {
+  // Obtener usuario actual
   let usuario = localStorage.getItem("usuarioActual");
 
-  let saldo = localStorage.getItem(`saldo_${usuario}`) ? parseFloat(localStorage.getItem(`saldo_${usuario}`)) : 0;
+  // Inicializar saldo del usuario
+  let saldo = localStorage.getItem(`saldo_${usuario}`) 
+    ? parseFloat(localStorage.getItem(`saldo_${usuario}`)) 
+    : 0;
   $("#saldo").text(`$${saldo}`);
 
-  let transacciones = localStorage.getItem(`transacciones_${usuario}`) ? JSON.parse(localStorage.getItem(`transacciones_${usuario}`)) : [];
+  // Inicializar transacciones del usuario
+  let transacciones = localStorage.getItem(`transacciones_${usuario}`) 
+    ? JSON.parse(localStorage.getItem(`transacciones_${usuario}`)) 
+    : [];
 
+  // Función para mostrar transacciones en tabla estilo banco
   function mostrarTransacciones() {
     $("#transactionTable tbody").empty();
 
@@ -32,11 +40,14 @@ $(document).ready(function() {
     }
   }
 
+  // Mostrar historial al cargar
   mostrarTransacciones();
 
+  // Modo oscuro persistente
   if (localStorage.getItem("darkMode") === "enabled") {
     $("body").addClass("dark-mode");
   }
+
   $("#darkModeToggle").on("click", function() {
     $("body").toggleClass("dark-mode");
     localStorage.setItem("darkMode", $("body").hasClass("dark-mode") ? "enabled" : "disabled");

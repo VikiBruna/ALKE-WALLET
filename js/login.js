@@ -1,15 +1,28 @@
 $(document).ready(function() {
   // Inicializar usuarios
-  let usuarios = localStorage.getItem("usuarios") ? JSON.parse(localStorage.getItem("usuarios")) : [{username:"usuario",password:"1234"}];
+  let usuarios = localStorage.getItem("usuarios") 
+    ? JSON.parse(localStorage.getItem("usuarios")) 
+    : [{username:"usuario",password:"1234"}];
 
   // Login
   $("#loginForm").on("submit", function(e){
     e.preventDefault();
-    let u=$("#username").val().trim(), p=$("#password").val().trim();
-    let valido=usuarios.find(x=>x.username===u && x.password===p);
+    let u = $("#username").val().trim(), p = $("#password").val().trim();
+    let valido = usuarios.find(x => x.username === u && x.password === p);
+
     if(valido){
+      // Guardar usuario actual
+      localStorage.setItem("usuarioActual", u);
+
+      // Inicializar cuenta si no existe
+      if (!localStorage.getItem(`saldo_${u}`)) {
+        localStorage.setItem(`saldo_${u}`, 0);
+        localStorage.setItem(`transacciones_${u}`, JSON.stringify([]));
+        localStorage.setItem(`contactos_${u}`, JSON.stringify([]));
+      }
+
       $("#loginMessage").text("Login exitoso").css("color","green");
-      window.location.href="menu.html";
+      window.location.href = "menu.html";
     } else {
       $("#loginMessage").text("Usuario o contraseña incorrectos").css("color","red");
     }
@@ -31,12 +44,19 @@ $(document).ready(function() {
   // Registro
   $("#registerForm").on("submit", function(e){
     e.preventDefault();
-    let u=$("#newUsername").val().trim(), p=$("#newPassword").val().trim();
-    if(usuarios.find(x=>x.username===u)){
+    let u = $("#newUsername").val().trim(), p = $("#newPassword").val().trim();
+
+    if(usuarios.find(x => x.username === u)){
       alert("Ese usuario ya existe");
     } else {
       usuarios.push({username:u,password:p});
-      localStorage.setItem("usuarios",JSON.stringify(usuarios));
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+      // Inicializar cuenta nueva con saldo 0 y datos vacíos
+      localStorage.setItem(`saldo_${u}`, 0);
+      localStorage.setItem(`transacciones_${u}`, JSON.stringify([]));
+      localStorage.setItem(`contactos_${u}`, JSON.stringify([]));
+
       alert("Usuario registrado exitosamente");
       $("#registerForm").addClass("d-none");
       $("#loginForm").removeClass("d-none");
@@ -44,9 +64,9 @@ $(document).ready(function() {
   });
 
   // Modo oscuro persistente
-  if(localStorage.getItem("darkMode")==="enabled") $("body").addClass("dark-mode");
-  $("#darkModeToggle").on("click",function(){
+  if(localStorage.getItem("darkMode") === "enabled") $("body").addClass("dark-mode");
+  $("#darkModeToggle").on("click", function(){
     $("body").toggleClass("dark-mode");
-    localStorage.setItem("darkMode",$("body").hasClass("dark-mode")?"enabled":"disabled");
+    localStorage.setItem("darkMode", $("body").hasClass("dark-mode") ? "enabled" : "disabled");
   });
 });
