@@ -1,34 +1,52 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const toggle = document.getElementById("darkModeToggle");
+$(document).ready(function() {
+  // Inicializar usuarios
+  let usuarios = localStorage.getItem("usuarios") ? JSON.parse(localStorage.getItem("usuarios")) : [{username:"usuario",password:"1234"}];
 
-  // Activar modo oscuro si estaba guardado
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-  }
-
-  toggle.addEventListener("click", function() {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
+  // Login
+  $("#loginForm").on("submit", function(e){
+    e.preventDefault();
+    let u=$("#username").val().trim(), p=$("#password").val().trim();
+    let valido=usuarios.find(x=>x.username===u && x.password===p);
+    if(valido){
+      $("#loginMessage").text("Login exitoso").css("color","green");
+      window.location.href="menu.html";
+    } else {
+      $("#loginMessage").text("Usuario o contraseña incorrectos").css("color","red");
+    }
   });
 
-  // Validación simple de login
-  const loginForm = document.getElementById("loginForm");
-  loginForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+  // Mostrar formulario de registro
+  $("#showRegister").on("click", function(){
+    $("#registerForm").removeClass("d-none");
+    $("#loginForm").addClass("d-none");
+    $("#loginMessage").text("");
+  });
 
-    if (username === "usuario" && password === "1234") {
-      if (!localStorage.getItem("saldo")) {
-        localStorage.setItem("saldo", 0); // inicializa saldo
-      }
-      if (!localStorage.getItem("transacciones")) {
-        localStorage.setItem("transacciones", JSON.stringify([]));
-      }
-      window.location.href = "menu.html";
+  // Cancelar registro
+  $("#cancelRegister").on("click", function(){
+    $("#registerForm").addClass("d-none");
+    $("#loginForm").removeClass("d-none");
+  });
+
+  // Registro
+  $("#registerForm").on("submit", function(e){
+    e.preventDefault();
+    let u=$("#newUsername").val().trim(), p=$("#newPassword").val().trim();
+    if(usuarios.find(x=>x.username===u)){
+      alert("Ese usuario ya existe");
     } else {
-      document.getElementById("loginMessage").textContent = "Usuario o contraseña incorrectos";
-      document.getElementById("loginMessage").style.color = "red";
+      usuarios.push({username:u,password:p});
+      localStorage.setItem("usuarios",JSON.stringify(usuarios));
+      alert("Usuario registrado exitosamente");
+      $("#registerForm").addClass("d-none");
+      $("#loginForm").removeClass("d-none");
     }
+  });
+
+  // Modo oscuro persistente
+  if(localStorage.getItem("darkMode")==="enabled") $("body").addClass("dark-mode");
+  $("#darkModeToggle").on("click",function(){
+    $("body").toggleClass("dark-mode");
+    localStorage.setItem("darkMode",$("body").hasClass("dark-mode")?"enabled":"disabled");
   });
 });

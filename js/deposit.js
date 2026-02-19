@@ -1,44 +1,82 @@
-document.addEventListener("DOMContentLoaded", function() {
-  const depositForm = document.getElementById("depositForm");
-
-  // Mostrar saldo actual
+$(document).ready(function() {
+  // Inicializar saldo
   let saldo = localStorage.getItem("saldo") ? parseFloat(localStorage.getItem("saldo")) : 0;
-  document.getElementById("saldo").textContent = `$${saldo}`;
+  $("#saldo").text(`$${saldo}`);
 
-  depositForm.addEventListener("submit", function(event) {
+  // Inicializar contactos
+  let contactos = localStorage.getItem("contactos") ? JSON.parse(localStorage.getItem("contactos")) : ["Ana", "Pedro", "Luis"];
+
+  // Mostrar lista de contactos
+  function mostrarContactos() {
+    $("#contactList").empty();
+    contactos.forEach(c => {
+      $("#contactList").append(`<li class="list-group-item contacto-item">${c}</li>`);
+    });
+  }
+  mostrarContactos();
+
+  // Autocompletar al hacer clic en un contacto
+  $(document).on("click", ".contacto-item", function() {
+    $("#destinatario").val($(this).text());
+  });
+
+  // Agregar contacto
+  $("#addContactBtn").on("click", function() {
+    let nuevo = prompt("Ingrese el nombre del nuevo contacto:");
+    if (nuevo && !contactos.includes(nuevo)) {
+      contactos.push(nuevo);
+      localStorage.setItem("contactos", JSON.stringify(contactos));
+      mostrarContactos();
+      alert(`Contacto ${nuevo} agregado exitosamente`);
+    }
+  });
+
+  // Depositar dinero
+  $("#depositForm").on("submit", function(event) {
     event.preventDefault();
+    let monto = parseFloat($("#monto").val());
+    let destinatario = $("#destinatario").val().trim();
 
-    let monto = parseFloat(document.getElementById("monto").value);
+    if (!destinatario) {
+      alert("Seleccione o ingrese un destinatario");
+      return;
+    }
     if (isNaN(monto) || monto <= 0) {
       alert("Ingrese un monto válido");
       return;
     }
 
-    // Actualizar saldo
+    let saldoAntes = saldo;
     saldo += monto;
+    let saldoDespues = saldo;
     localStorage.setItem("saldo", saldo);
 
-    // Guardar transacción
+    // Guardar transacción detallada
     let transacciones = localStorage.getItem("transacciones") ? JSON.parse(localStorage.getItem("transacciones")) : [];
     transacciones.push({
       tipo: "Depósito",
-      destinatario: "-",
-      monto: monto,
+      origen: "Usuario",
+      destinatario,
+      monto,
+      saldoAntes,
+      saldoDespues,
       fecha: new Date().toLocaleString()
     });
     localStorage.setItem("transacciones", JSON.stringify(transacciones));
 
-    alert(`Depósito realizado: $${monto}`);
-    window.location.href = "menu.html";
+    alert(`Depósito exitoso: $${monto} a ${destinatario}`);
+    $("#saldo").text(`$${saldo}`);
+    $("#monto").val("");
+    $("#destinatario").val("");
   });
 
-  // Modo oscuro
-  const toggle = document.getElementById("darkModeToggle");
+  // Modo oscuro persistente
   if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
+    $("body").addClass("dark-mode");
   }
-  toggle.addEventListener("click", function() {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
+
+  $("#darkModeToggle").on("click", function() {
+    $("body").toggleClass("dark-mode");
+    localStorage.setItem("darkMode", $("body").hasClass("dark-mode") ? "enabled" : "disabled");
   });
 });

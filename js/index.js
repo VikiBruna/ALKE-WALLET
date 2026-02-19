@@ -1,8 +1,4 @@
 $(document).ready(function() {
-  // Mostrar saldo actual
-  let saldo = localStorage.getItem("saldo") ? parseFloat(localStorage.getItem("saldo")) : 0;
-  $("#saldo").text(`$${saldo}`);
-
   // Modo oscuro persistente
   if (localStorage.getItem("darkMode") === "enabled") {
     $("body").addClass("dark-mode");
