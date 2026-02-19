@@ -1,0 +1,83 @@
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor de login */
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Títulos */
+h1, h2 {
+  color: #0d6efd; /* Azul Bootstrap */
+  text-align: center;
+}
+
+/* Modo oscuro */
+.dark-mode {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .login-container {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+.dark-mode h1, 
+.dark-mode h2 {
+  color: #90caf9; /* Azul claro en modo oscuro */
+}
+
+.dark-mode .navbar {
+  background-color: #212121 !important;
+}
+
+.dark-mode .table {
+  color: #e0e0e0;
+}
+
+/* Botones */
+.btn-primary {
+  background-color: #0d6efd;
+  border: none;
+}
+
+.btn-success {
+  background-color: #198754;
+  border: none;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  border: none;
+}
+
+.btn-info {
+  background-color: #0dcaf0;
+  border: none;
+}
+
+.btn-dark {
+  background-color: #343a40;
+  border: none;
+}
+
+/* Ajustes de tabla */
+.table th, .table td {
+  text-align: center;
+}
+
+/* Eliminar cualquier rastro de sidebar */
+.sidebar, .nav-left, aside {
+  display: none !important;
+}
